@@ -1,6 +1,6 @@
 <?php
 
-namespace Chiron\ChironPackageDiscovery;
+namespace Chiron\PackageDiscovery;
 
 use Composer\Script\Event;
 

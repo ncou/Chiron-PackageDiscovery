@@ -10,7 +10,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Chiron\\": "src/"
+            "Chiron\\PackageDiscovery": "src/"
         }
     },
     "minimum-stability": "dev",
