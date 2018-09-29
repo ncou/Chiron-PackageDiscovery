@@ -6,27 +6,48 @@ use Composer\Script\Event;
 
 class ComposerScripts
 {
-    public static function postDump(Event $event)
+    /**
+     * Build the manifest and write it to disk.
+     *
+     * @return void
+     */
+    public static function postDump(Event $event): void
     {
-        $vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
-        require_once $vendorDir . '/autoload.php';
+        $vendorPath = $event->getComposer()->getConfig()->get('vendor-dir');
+
+        //require_once $vendorPath . '/autoload.php';
+
         $installedPackages = [];
-        if (file_exists($path = $vendorDir . '/composer/installed.json')) {
+        if (file_exists($path = $vendorPath . '/composer/installed.json')) {
             $installedPackages = json_decode(file_get_contents($path), true);
         }
+
         $discoverPackages = [];
         foreach ($installedPackages as $package) {
-            if (!empty($package['extra']['laravel'])) {
-                $packageInfo = $package['extra']['laravel'];
-                $discoverPackages[$package['name']] = [];
-                if (!empty($packageInfo['providers'])) {
-                    $discoverPackages[$package['name']]['providers'] = $packageInfo['providers'];
-                }
-                if (!empty($packageInfo['aliases'])) {
-                    $discoverPackages[$package['name']]['aliases'] = $packageInfo['aliases'];
-                }
+            if (!empty($package['extra']['chiron'])) {
+                $packageInfo = $package['extra']['chiron'];
+                $discoverPackages[$package['name']] = $packageInfo;
             }
         }
-        file_put_contents($vendorDir . '/../bootstrap/cache/packages.php', '<?php return ' . var_export($discoverPackages, true) . ';');
+
+        static::write($vendorPath . '/../bootstrap/cache/packages.php', $discoverPackages);
+    }
+
+    /**
+     * Write the given manifest array to disk.
+     *
+     * @param  string  $manifestPath
+     * @param  array  $manifest
+     * @return void
+     *
+     * @throws \RuntimeException
+     */
+    private static function write(string $manifestPath, array $manifest):void
+    {
+        if (! is_writable(dirname($manifestPath))) {
+            throw new \RuntimeException('The directory "'.dirname($manifestPath).'" must be present and writable.');
+        }
+
+        file_put_contents($manifestPath, '<?php return ' . var_export($manifest, true) . ';');
     }
 }
