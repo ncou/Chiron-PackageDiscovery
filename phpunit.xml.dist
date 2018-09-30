@@ -11,7 +11,7 @@
          bootstrap="vendor/autoload.php"
          >
     <testsuites>
-        <testsuite name="Chiron Framework Tests">
+        <testsuite name="Package Discovery Tests">
             <directory>tests/</directory>
         </testsuite>
     </testsuites>

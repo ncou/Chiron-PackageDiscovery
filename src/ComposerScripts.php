@@ -9,6 +9,9 @@ use Composer\IO\IOInterface;
 use Composer\Package\PackageInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
+use Composer\Script\ScriptEvents;
+
+//https://github.com/laravel/framework/blob/9f313ce9bb5ad49a06ae78d33fbdd1c92a0e21f6/src/Illuminate/Foundation/ComposerScripts.php#L53
 
 class ComposerScripts implements EventSubscriberInterface, PluginInterface
 {
@@ -53,9 +56,9 @@ class ComposerScripts implements EventSubscriberInterface, PluginInterface
     public static function getSubscribedEvents()
     {
         return [
-            'post-autoload-dump'   => 'postAutoloadDump',
-            'post-create-project-cmd'   => 'postCreateProject',
-            'post-install-cmd'   => 'postInstall',
+            ScriptEvents::POST_AUTOLOAD_DUMP    => 'postAutoloadDump',
+            ScriptEvents::POST_CREATE_PROJECT_CMD    => 'postCreateProject',
+            ScriptEvents::POST_INSTALL_CMD   => 'postInstall',
         ];
     }
 
@@ -68,7 +71,22 @@ class ComposerScripts implements EventSubscriberInterface, PluginInterface
     {
         $event->getIO()->write('<info>    Packages Auto-Discovery [Executed]</info>');
         $vendorPath = $event->getComposer()->getConfig()->get('vendor-dir');
+        $manifestPath = $vendorPath . '/../bootstrap/cache/packages.php';
 
+        self::discoverPackages($vendorPath, $manifestPath);
+    }
+
+    /**
+     * Discover and Write the found packages in a manifest array file to disk.
+     *
+     * @param  string  $manifestPath
+     * @param  array  $manifest
+     * @return void
+     *
+     * @throws \RuntimeException
+     */
+    private static function discoverPackages(string $vendorPath, string $manifestPath): void
+    {
         $installedPackages = [];
         if (file_exists($path = $vendorPath . '/composer/installed.json')) {
             $installedPackages = json_decode(file_get_contents($path), true);
@@ -82,25 +100,12 @@ class ComposerScripts implements EventSubscriberInterface, PluginInterface
             }
         }
 
-        self::writeManifest($vendorPath . '/../bootstrap/cache/packages.php', $discoverPackages);
-    }
-
-    /**
-     * Write the given manifest array to disk.
-     *
-     * @param  string  $manifestPath
-     * @param  array  $manifest
-     * @return void
-     *
-     * @throws \RuntimeException
-     */
-    private static function writeManifest(string $manifestPath, array $manifest):void
-    {
         if (! is_writable(dirname($manifestPath))) {
             throw new \RuntimeException('The directory "'.dirname($manifestPath).'" must be present and writable.');
         }
 
-        file_put_contents($manifestPath, '<?php return ' . var_export($manifest, true) . ';');
+        file_put_contents($manifestPath, '<?php return ' . var_export($discoverPackages, true) . ';');
+
     }
 
     /**
@@ -168,7 +173,7 @@ class ComposerScripts implements EventSubscriberInterface, PluginInterface
         $key = self::generateRandomString();
         foreach ($configs as $config) {
             if (is_file($config)) {
-                $content = preg_replace('/^APP_KEY=.*/m', "APP_KEY=$key", file_get_contents($config), -1, $count);
+                $content = preg_replace('/^APP_KEY=.*/m', 'APP_KEY='.$key, file_get_contents($config), -1, $count);
                 if ($count > 0) {
                     file_put_contents($config, $content);
                     echo "APP_KEY value has been updated with a new random 32 chars string.\n";
