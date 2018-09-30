@@ -15,7 +15,7 @@ class ComposerScripts
     {
         $vendorPath = $event->getComposer()->getConfig()->get('vendor-dir');
 
-        //require_once $vendorPath . '/autoload.php';
+        require_once $vendorPath . '/autoload.php';
 
         $installedPackages = [];
         if (file_exists($path = $vendorPath . '/composer/installed.json')) {
