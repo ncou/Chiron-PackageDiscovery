@@ -18,8 +18,6 @@ Basic Composer script to allow package discovery for the Chiron micro framework.
 Installation
 ------------
 
-    $ composer require chiron/package-discovery
-
 1. Run
     ```
     $ composer require chiron/package discovery
@@ -39,7 +37,7 @@ Installation
 "extra": {
     "chiron": {
         "providers": [
-            "Barryvdh\\Debugbar\\ServiceProvider"
+            "Chiron\\Debugbar\\ServiceProvider"
         ]
     }
 }
