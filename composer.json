@@ -22,7 +22,8 @@
         "psr-4": { "tests\\": "tests/" }
     },
     "scripts": {
-        "phpunit": "phpunit --colors=always"
+        "phpunit": "phpunit --colors=always",
+        "test-coverage": "phpunit --coverage-clover clover.xml"
     },
     "extra": {
         "class": "Chiron\\PackageDiscovery\\ComposerScripts"
