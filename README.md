@@ -19,3 +19,45 @@ Installation
 ------------
 
     $ composer require chiron/package-discovery
+
+Usage
+-----
+
+The `ComposerScripts` class also implements a static method `postCreateProject()` that can be called after
+a Chiron project is created, through the `post-create-project-cmd` composer script.
+A similar method exists for running tasks after each `composer install` call, which is `postInstall()`.
+These methods allow to run other `ComposerScripts` class methods like `setPermission()` or `generateApplicationKey()`, 
+depending on the corresponding parameters set in the `extra` section of the `composer.json` file.
+For example,
+
+```json
+{
+    "name": "chiron/skeleton",
+    "type": "project",
+    ...
+    "extra": {
+        "post-create-project-cmd": {
+            "copyFiles": [
+                {
+                    "config/templates/console-local.php": "config/console-local.php",
+                    "config/templates/web-local.php": "config/web-local.php",
+                    "config/templates/db-local.php": "config/db-local.php",
+                    "config/templates/cache.json": ["runtime/cache.json", true]
+                }
+            ],
+            "generateApplicationKey": [
+                "config/web-local.php"
+            ]
+        },
+        "post-install-cmd": {
+            "setPermission": [
+                {
+                    "runtime": "0777",
+                    "web/assets": "0777",
+                    "chiron": "0755"
+                }
+            ]
+        }
+    }
+}
+```
