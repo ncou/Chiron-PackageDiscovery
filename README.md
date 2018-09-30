@@ -27,7 +27,6 @@ Installation
     ```php
     'providers' => [
         ...
-
         Chiron\PackageDiscovery\PackageDiscoveryServiceProvider::class,
     ],
     ```
