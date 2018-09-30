@@ -10,12 +10,9 @@ class PackageDiscoveryServiceProvider
 {
     /**
      * Register the service provider.
-     *
-     * @return void
      */
     public function register(ContainerInterface $container)
     {
-
         $packages = [];
         $packagesFile = base_path() . '/bootstrap/cache/packages.php';
 
@@ -24,7 +21,7 @@ class PackageDiscoveryServiceProvider
         }
 
         foreach ($packages as $package) {
-            if (!empty($package['providers'])) {
+            if (! empty($package['providers'])) {
                 array_walk($package['providers'], function ($provider) use ($container) {
                     $container->register($provider);
                 });
