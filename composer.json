@@ -25,7 +25,7 @@
     "scripts": {
         "phpunit": "phpunit --colors=always",
         "test-coverage": "phpunit --coverage-clover clover.xml",
-        "phpstan": "phpstan analyse src --level=8"
+        "phpstan": "phpstan analyse src --level=7"
     },
     "extra": {
         "class": "Chiron\\PackageDiscovery\\ComposerScripts"
