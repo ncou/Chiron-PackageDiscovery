@@ -20,7 +20,32 @@ Installation
 
     $ composer require chiron/package-discovery
 
-Usage
+1. Run
+    ```
+    $ composer require chiron/package discovery
+    ```
+
+2. Add service provider to **config/container.php**.
+    ```php
+    'providers' => [
+        ...
+
+        Chiron\PackageDiscovery\PackageDiscoveryServiceProvider::class,
+    ],
+    ```
+
+3. Make sure your package's **composer.json** file as below
+```json
+"extra": {
+    "chiron": {
+        "providers": [
+            "Barryvdh\\Debugbar\\ServiceProvider"
+        ]
+    }
+}
+```
+
+Helpers
 -----
 
 The `ComposerScripts` class also implements a static method `postCreateProject()` that can be called after
