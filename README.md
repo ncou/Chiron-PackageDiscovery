@@ -8,6 +8,7 @@
 
 [![StyleCI](https://styleci.io/repos/150878536/shield?style=flat)](https://styleci.io/repos/150878536)
 [![PHP-Eye](https://php-eye.com/badge/chiron/package-discovery/tested.svg?style=flat)](https://php-eye.com/package/chiron/package-discovery)
+[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 
 Chiron Package Discovery
 ---------------
