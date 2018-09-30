@@ -10,12 +10,7 @@ use Composer\Package\PackageInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
 
-// TODO : générer la clé aléatoire du APP_KEY dans le fichier .env
-//https://github.com/laravel/framework/blob/248245ab3e9d2876e0331df318410bc21a5bca01/src/Illuminate/Foundation/Console/KeyGenerateCommand.php
-
-class ComposerScripts implements
-    EventSubscriberInterface,
-    PluginInterface
+class ComposerScripts implements EventSubscriberInterface, PluginInterface
 {
 
     /**
@@ -41,6 +36,14 @@ class ComposerScripts implements
     {
         $this->composer        = $composer;
         $this->io              = $io;
+
+/*
+        $this->_vendorDir = rtrim($composer->getConfig()->get('vendor-dir'), '/');
+        $file = $this->_vendorDir . '/yiisoft/extensions.php';
+        if (!is_file($file)) {
+            @mkdir(dirname($file), 0777, true);
+            file_put_contents($file, "<?php\n\nreturn [];\n");
+        }*/
     }
     /**
      * Return list of event handlers in this class.
@@ -50,18 +53,10 @@ class ComposerScripts implements
     public static function getSubscribedEvents()
     {
         return [
-            'post-autoload-dump'   => 'postAutoloadDump2',
+            'post-autoload-dump'   => 'postAutoloadDump',
+            'post-create-project-cmd'   => 'postCreateProject',
+            'post-install-cmd'   => 'postInstall',
         ];
-        /*
-        return [
-            'post-package-install'   => 'onPostPackageInstall',
-            'post-package-uninstall' => 'onPostPackageUninstall',
-        ];*/
-    }
-
-    public static function postAutoloadDump2(PackageEvent $event): void
-    {
-        throw new Exception("TEST_NCOU");
     }
 
     /**
@@ -71,9 +66,8 @@ class ComposerScripts implements
      */
     public static function postAutoloadDump(Event $event): void
     {
+        $event->getIO()->write('<info>    Packages Auto-Discovery [Executed]</info>');
         $vendorPath = $event->getComposer()->getConfig()->get('vendor-dir');
-
-        require_once $vendorPath . '/autoload.php';
 
         $installedPackages = [];
         if (file_exists($path = $vendorPath . '/composer/installed.json')) {
@@ -88,7 +82,7 @@ class ComposerScripts implements
             }
         }
 
-        static::writeManifest($vendorPath . '/../bootstrap/cache/packages.php', $discoverPackages);
+        self::writeManifest($vendorPath . '/../bootstrap/cache/packages.php', $discoverPackages);
     }
 
     /**
@@ -116,7 +110,7 @@ class ComposerScripts implements
      */
     public static function postCreateProject(Event $event)
     {
-        static::runCommands($event, __METHOD__);
+        static::runCommands($event, 'post-create-project-cmd');
     }
     /**
      * Special method to run tasks defined in `[extra][yii\composer\Installer::postInstall]` key in `composer.json`
@@ -126,7 +120,7 @@ class ComposerScripts implements
      */
     public static function postInstall(Event $event)
     {
-        static::runCommands($event, __METHOD__);
+        static::runCommands($event, 'post-install-cmd');
     }
     /**
      * Special method to run tasks defined in `[extra][$extraKey]` key in `composer.json`
@@ -147,7 +141,7 @@ class ComposerScripts implements
      * Sets the correct permission for the files and directories listed in the extra section.
      * @param array $paths the paths (keys) and the corresponding permission octal strings (values)
      */
-    private static function setPermission(array $paths): void
+    public static function setPermission(array $paths): void
     {
         foreach ($paths as $path => $permission) {
             echo "chmod('$path', $permission)...";
@@ -165,18 +159,19 @@ class ComposerScripts implements
         }
     }
     /**
-     * Generates a cookie validation key for every app config listed in "config" in extra section.
+     * Generates a cookie validation key for every app config listed in "configs" in extra section.
      * You can provide one or multiple parameters as the configuration files which need to have validation key inserted.
      */
-    private static function generateCookieValidationKey(): void
+    public static function generateApplicationKey(): void
     {
         $configs = func_get_args();
         $key = self::generateRandomString();
         foreach ($configs as $config) {
             if (is_file($config)) {
-                $content = preg_replace('/(("|\')cookieValidationKey("|\')\s*=>\s*)(""|\'\')/', "\\1'$key'", file_get_contents($config), -1, $count);
+                $content = preg_replace('/^APP_KEY=.*/m', "APP_KEY=$key", file_get_contents($config), -1, $count);
                 if ($count > 0) {
                     file_put_contents($config, $content);
+                    echo "APP_KEY value has been updated with a new random 32 chars string.\n";
                 }
             }
         }
@@ -194,7 +189,7 @@ class ComposerScripts implements
      * location, second defines whether file can be overwritten (by default method don't overwrite
      * existing files).
      */
-    private static function copyFiles(array $paths): void
+    public static function copyFiles(array $paths): void
     {
         foreach ($paths as $source => $target) {
             // handle file target as array [path, overwrite]

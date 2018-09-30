@@ -10,7 +10,7 @@
         "composer-plugin-api": "^1.0"
     },
     "require-dev": {
-        "composer/composer": "^1.5.2"
+        "composer/composer": "^1.7.2"
     },
     "autoload": {
         "psr-4": {
