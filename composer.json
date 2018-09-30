@@ -1,17 +1,24 @@
 {
     "name": "chiron/package-discovery",
-    "type": "library",
+    "type": "composer-plugin",
     "description": "Composer Scripts for Chiron Framework Package Auto Discvery",
     "keywords": ["framework","chiron","package","discovery", "auto", "autodiscovery", "discover"],
     "homepage": "https://github.com/ncou/Chiron-PackageDiscovery",
     "license": "MIT",
     "require": {
-        "php": ">=7.1.3"
+        "php": "^7.1",
+        "composer-plugin-api": "^1.0"
+    },
+    "require-dev": {
+        "composer/composer": "^1.5.2"
     },
     "autoload": {
         "psr-4": {
             "Chiron\\PackageDiscovery\\": "src/"
         }
+    },
+    "extra": {
+        "class": "Chiron\\PackageDiscovery\\ComposerScripts"
     },
     "minimum-stability": "dev",
     "prefer-stable": true
