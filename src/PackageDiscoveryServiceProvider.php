@@ -14,7 +14,9 @@ class PackageDiscoveryServiceProvider
     public function register(ContainerInterface $container)
     {
         $packages = [];
-        $packagesFile = base_path() . '/bootstrap/cache/packages.php';
+
+        // TODO : trouver comment ne pas utiliser cette constante !!!!
+        $packagesFile = \Chiron\ROOT_DIR . '/bootstrap/cache/packages.php';
 
         if (file_exists($packagesFile)) {
             $packages = include $packagesFile;
@@ -23,7 +25,8 @@ class PackageDiscoveryServiceProvider
         foreach ($packages as $package) {
             if (! empty($package['providers'])) {
                 array_walk($package['providers'], function ($provider) use ($container) {
-                    $container->register($provider);
+                    // TODO : faire remonter la méthode "register" directement dans la classe Application
+                    $container->register(new $provider);
                 });
             }
         }
