@@ -10,6 +10,7 @@ use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
 
 //https://github.com/laravel/framework/blob/9f313ce9bb5ad49a06ae78d33fbdd1c92a0e21f6/src/Illuminate/Foundation/ComposerScripts.php#L53
+//https://github.com/appzcoder/laravel-package-discovery/blob/master/src/ComposerScripts.php
 
 class ComposerScripts implements EventSubscriberInterface, PluginInterface
 {
