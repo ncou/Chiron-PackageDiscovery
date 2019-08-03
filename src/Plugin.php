@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Zend\ComponentInstaller;
+namespace Chiron\PackageDiscovery;
 
 use ArrayObject;
 use Composer\Composer;
