@@ -26,7 +26,7 @@ class PackageDiscoveryServiceProvider
             if (! empty($package['providers'])) {
                 array_walk($package['providers'], function ($provider) use ($container) {
                     // TODO : faire remonter la méthode "register" directement dans la classe Application
-                    $container->register(new $provider);
+                    $container->register(new $provider());
                 });
             }
         }
