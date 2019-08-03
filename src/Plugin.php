@@ -71,6 +71,12 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
         $vendorDir    = rtrim($this->composer->getConfig()->get('vendor-dir'), '/');
         $manifestFile = $fs->normalizePath($vendorDir . self::DISCOVERY_MANIFEST_FILENAME);
+        $manifestDir = dirname($manifestFile);
+
+        // Create the directory if necessary.
+        if (!file_exists($manifestDir)) {
+            mkdir($manifestDir, 0777, true);
+        }
 
         $newlyCreated = !file_exists($manifestFile);
 

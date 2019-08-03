@@ -20,7 +20,7 @@ Installation
 
 1. Run
     ```
-    $ composer require chiron/package discovery
+    $ composer require chiron/package-discovery
     ```
 
 2. Add service provider to **config/container.php**.
