@@ -147,7 +147,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     // TODO : vérifier le typehint de $module c'est plutot un tableau qu'une chaine :(
     private function injectPackageIntoManifest(string $package, $module): void
     {
-        $this->io->write(sprintf('<info>    Installing service providers for the package %s</info>', $package));
+        $this->io->write(sprintf('<info>    Installing service providers entries for package %s</info>', $package));
 
         $manipulator = new JsonManipulator(file_get_contents($this->manifest->getPath()));
         $manipulator->addMainKey($package, $module);
@@ -167,6 +167,14 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     {
         $package = $event->getOperation()->getPackage();
         $name    = $package->getName();
+        $extra   = $this->getExtraMetadata($package->getExtra());
+
+        // TODO : ajouter une vérifaction si dans les extra les valeurs sont correctes cad une string non vide et égale à "service-provider", et soit un tableau soit une chaine. Si ce n'est pas le cas on retire l'item du tableau $extra. on ne doit pas lever d'exception !!!!!! eventuellement lever un $io->write(erreur de format) si on est en mode verbeux.
+
+        if (empty($extra)) {
+            // Package does not define anything of interest; do nothing.
+            return;
+        }
 
         $this->removePackageFromManifest($name);
     }
@@ -179,7 +187,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      */
     private function removePackageFromManifest(string $package): void
     {
-        $this->io->write(sprintf('<info>    Removing service providers for the package %s</info>', $package));
+        $this->io->write(sprintf('<info>    Removing service providers entries for package %s</info>', $package));
 
         $manipulator = new JsonManipulator(file_get_contents($this->manifest->getPath()));
         $manipulator->removeMainKey($package);
