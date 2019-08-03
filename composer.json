@@ -28,7 +28,7 @@
         "phpstan": "phpstan analyse src --level=7"
     },
     "extra": {
-        "class": "Chiron\\PackageDiscovery\\ComposerScripts"
+        "class": "Chiron\\PackageDiscovery\\Plugin"
     },
     "minimum-stability": "dev",
     "prefer-stable": true
