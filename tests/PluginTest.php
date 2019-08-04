@@ -2,16 +2,16 @@
 
 namespace tests;
 
-use Chiron\PackageDiscovery\ComposerScripts;
+use Chiron\PackageDiscovery\Plugin;
 
-class ComposerScriptsTest extends TestCase
+class PluginTest extends TestCase
 {
     public function testDiscoverPackages()
     {
         $outputFilepath = __DIR__ . '/fixtures/packages.php';
         @unlink($outputFilepath);
 
-        $this->invokeMethod(new ComposerScripts(), 'discoverPackages', [__DIR__ . '/fixtures/vendor', $outputFilepath]);
+        $this->invokeMethod(new Plugin(), 'discoverPackages', [__DIR__ . '/fixtures/vendor', $outputFilepath]);
 
         $manifest = include $outputFilepath;
 
